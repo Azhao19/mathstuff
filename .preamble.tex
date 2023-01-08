@@ -1,0 +1,350 @@
+\documentclass[12pt, reqno]{amsart}
+
+% Import packages
+\usepackage{tikz-cd}
+\usepackage{amssymb, amsfonts, amsthm, amscd}
+\usepackage{mathtools}
+\usepackage{manfnt} % literally only for the danger sign
+\usepackage{comment} % comment blocks
+\usepackage[margin=0.75in]{geometry}
+\usepackage{hyperref}
+    \hypersetup{colorlinks=true,citecolor=blue,urlcolor =gray,linkcolor=gray,linkbordercolor={1 0 0}}
+\usepackage[english]{babel}
+\usepackage{verbatim} 
+\usepackage{enumerate}
+\usepackage{rotating} % Fan likes to rotate things
+\usepackage{bookmark} % For final PDF
+\usepackage{schemata}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{xfrac}
+\usepackage{tensor} % For typesetting notes from Phong's Spring class
+\usepackage{stmaryrd} % TCS font (St. Mary Road symbols)
+\usepackage[en-US]{datetime2}
+
+% tikz config
+\usetikzlibrary{positioning}
+\usetikzlibrary{positioning, matrix, arrows}
+
+% Set equation numbering to finest granularity
+\numberwithin{equation}{subsubsection}
+
+% Formal environments
+\newtheorem{thm}{Theorem}[subsubsection]
+\newtheorem{cor}{Corollary}[thm]
+\newtheorem{lemma}[thm]{Lemma}
+
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{conj}[thm]{Conjecture}
+
+\newtheorem*{rmk}{Remark}
+\newtheorem*{motiv}{Motivation}
+
+% Convenience macros
+\newcommand{\A}{\mathbb{A}}
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\z}{\mathbb{Z}}
+\newcommand{\zp}{\mathbb{Z}_p}
+\renewcommand{\c}{\mathbb{C}}
+\newcommand{\cp}{\mathbb{C}_p}
+\newcommand{\q}{\mathbb{Q}}
+\renewcommand{\r}{\mathbb{R}}
+\newcommand{\n}{\mathbb{N}}
+\newcommand{\subscript}[2]{#1_{\geq #2}}
+\newcommand{\subsubscript}[3]{(\subscript{#1}{#2})_{#3}}
+\newcommand{\supscript}[2]{#1^{#2}}
+\newcommand{\supsupscript}[3]{(\supscript{#1}{#2})^{#3}}
+% if you need three su{b, p}scripts you're doing something wrong
+\newcommand{\subsupscript}[3]{\subscript{#1}{#2}^{#3}} % e.g., affine line
+\newcommand{\e}{\epsilon}
+\newcommand{\barred}[1]{\left| #1 \right|}
+\newcommand{\braced}[1]{\lbrace #1 \rbrace}
+\newcommand{\inparenthesis}[1]{\left( #1 \right)}
+\newcommand{\closure}[1]{\overline{#1}}
+\renewcommand{\frak}[1]{\mathfrak{#1}}
+\newcommand{\curly}[1]{\mathcal{#1}}
+\newcommand{\bb}[1]{\mathbb{#1}}
+\renewcommand{\phi}{\varphi}
+\newcommand{\fff}[1]{\bb{F}_p((#1))} % finite function field in var #1
+\newcommand{\namedmorphism}[3]{#1: #2 \rightarrow #3}
+\newcommand{\namedsurjection}[3]{#1: #2 \twoheadrightarrow #3}
+\newcommand{\namedinjection}[3]{#1: #2 \hookrightarrow #3}
+\newcommand{\restrict}[2]{#1|_{#2}}
+\newcommand{\completion}[1]{\hat{#1}}
+\newcommand{\setdiff}[2]{#1 \setminus #2}
+\newcommand{\disjointcup}{\sqcup}
+\newcommand{\bigdisjointcup}{\bigsqcup}
+\newcommand{\indexedlist}[2]{#1_0, \dots, #1_{#2-1}}
+\newcommand{\projection}[3]{\namedmorphism{\pi_{#1}}{#2}{#3}}
+\newcommand{\strictsubset}{\subsetneq}
+\newcommand{\chaincomplex}[1]{\supscript{#1}{\sbullet}}
+
+
+% Formatting commands for laziness
+\renewcommand{\rm}[1]{\mathrm{#1}}
+\renewcommand{\bf}[1]{\textbf{#1}}
+\renewcommand{\it}[1]{\textit{#1}}
+\newcommand{\annotate}[1]{\marginpar[#1]{#1}} %[on left]{on right}
+\newcommand{\spaceinequation}{\:}
+\newcommand{\linedelimiter}{\noindent ---------------------------------------------------------------------------------------------------------------------------------------------}
+
+% Arrows for morphisms: #1 is top, #2 is bottom
+\newcommand{\rinj}[2]{\xhookrightarrow[#2]{#1}}
+\newcommand{\rsurj}[2]{\xtwoheadrightarrow[#2]{#1}}
+\newcommand{\linj}[2]{\xhookleftarrow[#2]{#1}}
+\newcommand{\lsurj}[2]{\xhooktwoheadleftarrow[#2]{#1}}
+\newcommand{\rnormal}[2]{\xrightarrow[#2]{#1}}
+\newcommand{\lnormal}[2]{\xleftarrow[#2]{#1}}
+\newcommand{\bij}[2]{\xleftrightarrow[#2]{#1}}
+
+% Common expressions
+\newcommand{\ellipticcurve}[1]{#1^3 + A#1 + B}
+\newcommand{\polynomial}[4]{\sum_{#1 = 0}^{#4}#2_i#3^{#1}} % #1 is index, 
+                                                           % #2 is coefficient var, 
+                                                           % #3 is polynomial var,
+                                                           % #4 is degree
+\newcommand{\modulareq}[3]{#1 \equiv #2 \pmod{#3}}         % e.g., x = 1 (mod 5)
+\newcommand{\isomorphic}[2]{#1 \simeq #2}
+
+% Common operators
+\newcommand{\opone}[2]{\operatorname{#1}_{#2}}                         % helper
+\newcommand{\optwo}[3]{\subsupscript{\operatorname{#1}}{#2}{#3}}       % helper
+\newcommand{\im}[1]{\opone{Im}{#1}}
+\newcommand{\ord}[1]{\opone{ord}{#1}}
+\renewcommand{\gcd}[2]{\operatorname{gcd}(#1, #2)} % \rm{gcd} -> gcd if static scope
+\renewcommand{\dim}[1]{\opone{dim}{#1}}
+\renewcommand{\deg}[1]{\opone{deg}{#1}}
+\newcommand{\length}[2]{\operatorname{length}_{#1}{#2}}
+\newcommand{\vsdim}[2]{\operatorname{dim}_{#1}{#2}}
+\newcommand{\trdeg}[2]{\operatorname{tr.deg}_{#1}{#2}}
+\newcommand{\Cl}[1]{\opone{Cl}{#1}}                          % e.g., Cl_Q = { 1 }
+\newcommand{\Gal}[1]{\opone{\curly{G}}{#1}}
+\newcommand{\Spec}[1]{\opone{Spec}{#1}}
+\newcommand{\Proj}[1]{\opone{Proj}{#1}}
+\newcommand{\Frob}[1]{\opone{Frob}{#1}}
+\newcommand{\Aut}[2]{\optwo{Aut}{#1}{#2}} % sub == over what thing, sup == obj
+\newcommand{\End}[2]{\optwo{End}{#1}(#2)} 
+\newcommand{\Ind}[2]{\optwo{Ind}{#1}{#2}}
+\newcommand{\Res}[2]{\optwo{Res}{#1}{#2}}
+\newcommand{\Tor}[4]{\operatorname{Tor}_{#1}^{#2}(#3, #4)}
+\newcommand{\Ext}[4]{\operatorname{Ext}_{#1}^{#2}(#3, #4)}
+\newcommand{\ithcohomology}[4]{H^{#1}(#2, #3)_{#4}}        % #4 == type of coh
+\newcommand{\ithhomology}[3]{H_{#1}(#2, #3)}
+\newcommand{\quotient}[2]{#1/#2}                           % () added manually
+\newcommand{\nthofring}[2]{#1/#2#1}                        % e.g., Z/nZ
+\newcommand{\ntorsion}[2]{#1[#2]}                          % e.g., Sel[\varphi]
+\newcommand{\unitsofring}[2]{\supscript{#1}{#2}}           % e.g., R^*
+\newcommand{\abelianization}[1]{\supscript{#1}{\rm{ab}}} % K^{ab}
+\newcommand{\adjoin}[2]{#1[#2]}
+\newcommand{\laurentring}[2]{#1\llbracket #2 \rrbracket}
+\newcommand{\fiberproduct}[3]{#2 \cross_{#1} #3}
+\newcommand{\directsum}[2]{\oplus_{#1} #2}                 % for sets
+\newcommand{\directproduct}[2]{\prod_{#1}{#2}}             % for sets
+\newcommand{\tensorproduct}{\otimes}
+
+
+% Other symbols
+\newcommand{\warning}{\dbend}
+\newcommand{\existsuniquely}{\exists!}
+\newcommand{\doesntexist}{\nexists}
+\newcommand{\begincomment}{\comment} % \endcomment is already defined in comment
+
+% Common tikz Diagrams
+% You're going to have to use the LaTeX arrow mnemonics
+    % color: color
+    % hook: inj
+    % two heads: surj
+    % dashed, squiggly shapes, dash, equal
+% Each arrow arg will be a 4-tuple (color, shape, design, label)
+% N.B.: label must be of the proper syntax, with ' indicating left or down
+% positions.
+
+% Commutative Squares
+\newcommand{\commsquare}[8]{\[ % first 4 args are vertices, last 4 arrows
+                               % interpret as two clockwise lists
+\begin{tikzcd}
+        #1 && #2 \\
+	             \\
+	    #4 && $3
+	\arrow[from=1-1, to=1-3, #5] % each of the arrow args
+	\arrow[from=1-3, to=3-3, #6] % is a 4-tuple
+    \arrow[from=1-1, to=3-1, #7] % (color, hook/two heads, dashed/./equal, label)
+	\arrow[from=3-1, to=3-3, #8] % if unused attr, leave blank
+\end{tikzcd}\]}
+
+% Triangular Universal Property (Isoceles)
+\newcommand{\triangluaruniversalproperty}[5] {\[ % 3 vert's clockwise from left
+                                                 % name of top, then left arrow
+\begin{tikzcd}
+    #1 && #2 \\
+	& #3
+    \arrow[from=1-1, to=1-3, #4]
+	\arrow["{\exists!}", dashed, from=1-3, to=2-2]
+    \arrow[from=1-1, to=2-2, #5]
+\end{tikzcd}
+\]}
+
+% Natural Transformation
+\newcommand{\naturaltransformation}[5]{\[ % src then dst cat, functors, nat trans
+\begin{tikzcd}
+    #1 && #2
+	\arrow[""{name=1, anchor=center, inner sep=0}, "#3", curve={height=-12pt}, from=1-1, to=1-3]
+	\arrow[""{name=0, anchor=center, inner sep=0}, "#4"', curve={height=12pt}, from=1-1, to=1-3]
+    \arrow[#5, shorten <=3pt, shorten >=3pt, Rightarrow, from=1, to=0]
+\end{tikzcd}
+\]}
+
+% Short Exact Sequence
+\newcommand{\shortexactsequence}[5]{\[ % 3 objects and 2 morphisms
+\begin{tikzcd}
+	0 & #1 & #2 & #3 & 0 \\
+	\arrow[from=1-1, to=1-2]
+    \arrow[from=1-2, to=1-3, #4]
+    \arrow[from=1-3, to=1-4, #5]
+	\arrow[from=1-4, to=1-5]
+\end{tikzcd}
+\]}
+
+\newcommand{\sesinternal}[5] {\[
+	0 & #1 & #2 & #3 & 0 \\
+	\arrow[from=1-1, to=1-2]
+    \arrow[from=1-2, to=1-3, #4]
+    \arrow[from=1-3, to=1-4, #5]
+	\arrow[from=1-4, to=1-5]
+\]}
+
+% Long Exact Sequences (tex stack exchange post 3892)
+\newcommand{\longexactsequencewithcoefficients}[4] {\[ % 1st argument is coeff
+                                                       % 3 ses objects
+
+\begin{tikzpicture}[descr/.style={fill=white,inner sep=1.5pt}]
+        \matrix (m) [
+            matrix of math nodes,
+            row sep=1em,
+            column sep=2.5em,
+            text height=1.5ex, text depth=0.25ex
+        ]
+        { \dots & \ithcohomology{n-1}{#2}{#1} & \ithcohomology{n-1}{#3}{#1}
+                & \ithcohomology{n-1}{#4}{#1} \\
+            &  \ithcohomology{n}{#2}{#1} & \ithcohomology{n}{#3}{#1} &
+               \ithcohomology{n}{#4}{#1} \\
+            &  \ithcohomology{n+1}{#2}{#1} & \dots & \mbox{}
+        };
+
+        \path[overlay,->, font=\scriptsize,>=latex]
+        (m-1-1) edge (m-1-2)
+        (m-1-2) edge (m-1-3)
+        (m-1-3) edge (m-1-4)
+        (m-1-4) edge[out=355,in=175] node[descr,yshift=0.3ex] {$\delta_{n-1}$} (m-2-2)
+        (m-2-2) edge (m-2-3)
+        (m-2-3) edge (m-2-4)
+        (m-2-4) edge[out=355,in=175] node[descr,yshift=0.3ex] {$\delta_n$} (m-3-2)
+\end{tikzpicture}
+\]}
+
+\newcommand{\longexactsequence}[3] {\[
+
+\begin{tikzpicture}[descr/.style={fill=white,inner sep=1.5pt}]
+        \matrix (m) [
+            matrix of math nodes,
+            row sep=1em,
+            column sep=2.5em,
+            text height=1.5ex, text depth=0.25ex
+        ]
+        { \dots & H^{n-1}(#1) & H^{n-1}(#2) & H^{n-1}(#3) \\
+                &  H^{n}(#1) & H^{n}(#2) & H^{n}(#3) \\
+                &  H^{n+1}(#1) & \dots & \mbox{} \\
+        };
+
+        \path[overlay,->, font=\scriptsize,>=latex]
+        (m-1-1) edge (m-1-2)
+        (m-1-2) edge (m-1-3)
+        (m-1-3) edge (m-1-4)
+        (m-1-4) edge[out=355,in=175] node[descr,yshift=0.3ex] {$\delta_{n-1}$} (m-2-2)
+        (m-2-2) edge (m-2-3)
+        (m-2-3) edge (m-2-4)
+        (m-2-4) edge[out=355,in=175] node[descr,yshift=0.3ex] {$\delta_n$} (m-3-2)
+\end{tikzpicture}
+\]}
+
+% A 1 by Short Exact Sequence Grid
+\newcommand{\linkedshortexactsequences}[9]{\[ % arg 1: upper ses w/o tikz env
+                                             % 5 args for lower ses
+                                             % 3 args for vert arrows
+                    
+\begin{tikzcd}
+    #1
+    \\
+    0 & #2 & #3 & #4 & 0
+	\arrow[from=3-1, to=3-2]
+    \arrow[from=3-2, to=3-3, #5]
+    \arrow[from=3-3, to=3-4, #6]
+	\arrow[from=3-4, to=3-5]
+    \arrow[from=1-2, to=3-2, #7]
+    \arrow[from=1-3, to=3-3, #8]
+    \arrow[from=1-4, to=3-4, #9]
+\end{tikzcd}
+\]}
+
+
+% Fiber Product Diagram
+    % We give all arrows names except for the dashed one to avoid
+    % having to do any arrow formatting.
+\newcommand{\universalfiberproduct}[8]{\[ % arg order:
+                                           % 3 vertices of sq from top right
+                                           % name of right map
+                                           % " bottom map
+                                           % " contending object
+                                           % " arrow top right, bottom left
+                                           % 5th and 8th should have ' on labels
+\begin{tikzcd}                                       
+    #6 \\
+    & \fiberproduct{#2}{#3}{#1} && #1 \\
+	\\
+	& #3 && #2
+	\arrow["{\pi_1}", from=2-2, to=2-4]
+    \arrow[from=2-4, to=4-4, #4]
+	\arrow["{\pi_2}"', from=2-2, to=4-2]
+    \arrow[from=4-2, to=4-4, #5]
+    \arrow[curve={height=-12pt}, from=1-1, to=2-4, #7]
+    \arrow[curve={height=12pt}, from=1-1, to=4-2, #8]
+	\arrow["{\exists!}", dashed, from=1-1, to=2-2]
+\end{tikzcd}
+\]}
+
+% Pullback Diagram
+\newcommand{\pullbackdiagram}[6]{\[ % 4 vertices clockwise, then
+                                    % names of right and bottom map
+                                    % 6th should have ' on label
+\begin{tikzcd}
+    #1 && #2 \\
+	\\
+    #3 && #4
+	\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=3-3]
+    \arrow["{\pi_1}", from=1-1, to=3-1]
+    \arrow[from=1-1, to=1-3, #5]
+    \arrow[from=1-3, to=3-3, #6]
+    \arrow["{\pi_2}"', from=3-1, to=3-3]
+\end{tikzcd}
+\]}
+
+% Pushout Diagram
+\newcommand{\pushoutdiagram}[6]{\[ % 4 vertices clockwise, then
+                                   % names of right and bottom map
+                                   % 6th should have ' on label
+\begin{tikzcd}
+    #1 && #2 \\
+	\\
+    #3 && #4
+	\arrow["\ulcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=3-3]
+    \arrow["{\pi_1}", from=1-1, to=3-1]
+    \arrow[from=1-1, to=1-3, #5]
+    \arrow[from=1-3, to=3-3, #6]
+    \arrow["{\pi_2}"', from=3-1, to=3-3]
+\end{tikzcd}
+\]}
+
+\author{Alan Zhao}
+\date{\today}
+\email{asz2115@columbia.edu}
